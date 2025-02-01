@@ -101,8 +101,8 @@ public class AuthServicesImpl implements AuthServices {
             SignedJWT signedJWT = securityUtil.verifyToken(tokenRequest.getToken());
             Date expirationDate = signedJWT.getJWTClaimsSet().getExpirationTime();
             String jwtId = signedJWT.getJWTClaimsSet().getJWTID();
-            String username = signedJWT.getJWTClaimsSet().getSubject();
-            UserEntity user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(EnumException.USER_NOTFOUND));
+            String id = signedJWT.getJWTClaimsSet().getSubject();
+            UserEntity user = userRepository.findById(Long.parseLong(id)).orElseThrow(() -> new AppException(EnumException.USER_NOTFOUND));
 
             InvalidTokenEntity inValidateToken = InvalidTokenEntity.builder()
                     .id(jwtId)

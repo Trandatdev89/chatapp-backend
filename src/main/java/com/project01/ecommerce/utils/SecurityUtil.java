@@ -12,6 +12,7 @@ import com.project01.ecommerce.repository.InvalidateTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,8 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -47,7 +50,7 @@ public class SecurityUtil {
         Instant now = Instant.now();
 
         JwtClaimsSet jwtClaimsSet=JwtClaimsSet.builder()
-                .claim("scope",user.getAuthorities().stream().map(item->item.toString()).distinct().collect(Collectors.joining(" ")))
+                .claim("scope",user.getAuthorities().stream().map(item->item.toString()).collect(Collectors.joining(" ")))
                 .issuedAt(now)
                 .expiresAt(now.plus(expiration, ChronoUnit.SECONDS))
                 .subject(String.valueOf(user.getId()))

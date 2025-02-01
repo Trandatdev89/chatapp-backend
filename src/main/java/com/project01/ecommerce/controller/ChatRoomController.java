@@ -51,15 +51,6 @@ public class ChatRoomController {
                 .build();
     }
 
-    @PostMapping("/user")
-    public ApiResponse addUserToChatRoom(@RequestBody AddUserRequest addUserRequest){
-        chatRoomServices.addUserToChatRoom(addUserRequest);
-        return ApiResponse.builder()
-                .code(200)
-                .message("Add success!")
-                .build();
-    }
-
 
     @DeleteMapping("/{id}")
     public ApiResponse deleteChatRoom(@PathVariable List<Long> id){

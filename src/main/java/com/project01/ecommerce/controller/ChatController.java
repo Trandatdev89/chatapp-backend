@@ -4,6 +4,7 @@ package com.project01.ecommerce.controller;
 import com.project01.ecommerce.model.dto.MessageDTO;
 import com.project01.ecommerce.repository.UserRepository;
 import com.project01.ecommerce.services.MessageServices;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.NaturalId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -20,7 +21,6 @@ public class ChatController {
     @Autowired
     private MessageServices messageServices;
 
-
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
@@ -36,10 +36,10 @@ public class ChatController {
 
     @MessageMapping("/private")
     public void privateMessage(@Payload MessageDTO message) {
+        MessageDTO messageDTO = null;
         if(message.getMessage()!=null && !message.getMessage().equals("")) {
-            messageServices.saveMessagePrivate(message);
+            messageDTO = messageServices.saveMessagePrivate(message);
         }
-        List<MessageDTO> messageDTOS=messageServices.getMessageByReciveIdAndSenderId(message.getSenderId(),message.getReceiverId());
-        messagingTemplate.convertAndSendToUser(message.getReceiverId()+"","/private",messageDTOS);
+        messagingTemplate.convertAndSendToUser(message.getReceiverId().toString(),"/private",messageDTO);
     }
 }

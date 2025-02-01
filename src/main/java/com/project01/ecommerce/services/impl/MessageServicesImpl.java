@@ -30,7 +30,7 @@ public class MessageServicesImpl implements MessageServices {
 
 
     @Override
-    public void saveMessagePrivate(MessageDTO message) {
+    public MessageDTO saveMessagePrivate(MessageDTO message) {
         MessageEntity messageEntity=MessageEntity.builder()
                 .sender(userRepository.findById(message.getSenderId()).get())
                 .recipient(userRepository.findById(message.getReceiverId()).get())
@@ -38,6 +38,12 @@ public class MessageServicesImpl implements MessageServices {
                 .build();
 
         messageRepository.save(messageEntity);
+        return MessageDTO.builder()
+                .id(messageEntity.getId())
+                .message(messageEntity.getContent())
+                .receiverId(messageEntity.getRecipient().getId())
+                .senderId(messageEntity.getSender().getId())
+                .build();
     }
 
     @Override
@@ -55,7 +61,7 @@ public class MessageServicesImpl implements MessageServices {
     @Override
     public List<MessageDTO> getMessageByReciveIdAndSenderId(Long sendId, Long RecipentId) {
         List<MessageDTO> messages=new ArrayList<>();
-        List<MessageEntity> messageEntity = messageRepository.findBySender_IdAndRecipient_IdOrRecipient_IdAndSender_Id(sendId, RecipentId, sendId, RecipentId);
+        List<MessageEntity> messageEntity = messageRepository.findBySender_IdAndRecipient_IdOrRecipient_IdAndSender_Id(sendId, RecipentId, sendId, RecipentId); // Lay het tin nhan giua 2 nguoi con neu khong co or thi no chi lay cua sender
         for(MessageEntity item : messageEntity){
             MessageDTO message=MessageDTO.builder()
                     .id(item.getId())
@@ -78,6 +84,7 @@ public class MessageServicesImpl implements MessageServices {
         List<MessageEntity> messageEntity = messageRepository.findByChatRoom_Id(chatRoomId);
         for(MessageEntity item : messageEntity){
             MessageDTO message=MessageDTO.builder()
+                    .id(item.getId())
                     .message(item.getContent())
                     .senderId(item.getSender().getId())
                     .senderName(item.getSender().getUsername())

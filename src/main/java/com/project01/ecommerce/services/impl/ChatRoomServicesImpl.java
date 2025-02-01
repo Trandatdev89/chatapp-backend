@@ -47,25 +47,30 @@ public class ChatRoomServicesImpl implements ChatRoomServices {
         String userId= SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity user=userRepository.findById(Long.parseLong(userId)).get();
 
+        ChatRoomEntity chatRoomEntity = ChatRoomEntity.builder()
+                .name(chatRoomRequest.getName())
+                .picture(uploadfileUtil.uploadFile(chatRoomRequest.getPicture()))
+                .createBy(user.getUsername())
+                .build();
 
-        ChatRoomEntity chatRoomEntity = null;
-        try {
-            chatRoomEntity = ChatRoomEntity.builder()
-                    .name(chatRoomRequest.getName())
-                    .picture(uploadfileUtil.uploadFile(chatRoomRequest.getPicture()))
-                    .createBy(user.getUsername())
-                    .build();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         ChatRoomEntity chatRoomEntity1= chatRoomRepository.save(chatRoomEntity);
 
-        UserRole userRole=UserRole.builder()
-                .chatRoom(chatRoomEntity1)
-                .user(user)
-                .role("ADMIN")
-                .build();
-        userRoleRepository.save(userRole);
+        List<UserEntity> userList=userRepository.findByIdIn(chatRoomRequest.getUserId());
+        List<UserRole> userRoles = new ArrayList<>();
+        for(UserEntity item : userList){
+            if(userRoleRepository.existsByChatRoom_IdAndUser_Id(chatRoomEntity.getId(), item.getId())){
+                throw new AppException(EnumException.USER_EXITSED);
+            }else{
+                UserRole userRole1 = UserRole.builder()
+                        .chatRoom(chatRoomEntity1)
+                        .user(item)
+                        .role("MEMBER")
+                        .build();
+                userRoles.add(userRole1);
+            }
+        }
+        userRoleRepository.saveAll(userRoles);
+
         ChatRoomResponse chatRoomResponse= ChatRoomResponse.builder()
                 .name(chatRoomEntity1.getName())
                 .id(chatRoomEntity1.getId())
@@ -73,27 +78,6 @@ public class ChatRoomServicesImpl implements ChatRoomServices {
         return chatRoomResponse;
     }
 
-    @Override
-    public void addUserToChatRoom(AddUserRequest addUserRequest) {
-        ChatRoomEntity chatRoomEntity = chatRoomRepository.findById(addUserRequest.getChatRoomId()).get();
-        List<UserRole> userRoles= chatRoomEntity.getRoles();
-
-        List<UserEntity> listUser=userRepository.findByIdIn(addUserRequest.getIdUser());
-        for(UserEntity item : listUser){
-            if(userRoleRepository.existsByChatRoom_IdAndUser_Id(chatRoomEntity.getId(), item.getId())){
-                throw new AppException(EnumException.USER_EXITSED);
-            }
-            else{
-                UserRole userRole=UserRole.builder()
-                        .chatRoom(chatRoomEntity)
-                        .user(item)
-                        .role("MEMBER")
-                        .build();
-                userRoles.add(userRole);
-            }
-        }
-        userRoleRepository.saveAll(userRoles);
-    }
 
     @Override
     public List<ChatRoomResponse> getChatRoomByUser() {
@@ -102,7 +86,7 @@ public class ChatRoomServicesImpl implements ChatRoomServices {
         List<ChatRoomResponse> listResponse=new ArrayList<>();
         for(UserRole item : userRoles){
             if(item.getChatRoom()!=null){
-                listResponse.add(new ChatRoomResponse(item.getChatRoom().getId(),item.getChatRoom().getName(), item.getChatRoom().getPicture()!=null?ServletUriComponentsBuilder.fromCurrentContextPath().toUriString()+"/avatar/"+item.getChatRoom().getPicture():null));
+                listResponse.add(new ChatRoomResponse(item.getChatRoom().getId(),item.getChatRoom().getName(), item.getChatRoom().getPicture()));
             }
         }
         return listResponse;
@@ -111,7 +95,7 @@ public class ChatRoomServicesImpl implements ChatRoomServices {
     @Override
     public ChatRoomResponse getChatRoomById(Long id) {
         ChatRoomEntity list=chatRoomRepository.findById(id).get();
-        ChatRoomResponse listResponse=new ChatRoomResponse(list.getId(),list.getName(), list.getPicture()!=null?ServletUriComponentsBuilder.fromCurrentContextPath().toUriString()+"/avatar/"+list.getPicture():null);
+        ChatRoomResponse listResponse=new ChatRoomResponse(list.getId(),list.getName(), list.getPicture());
         return listResponse;
     }
 

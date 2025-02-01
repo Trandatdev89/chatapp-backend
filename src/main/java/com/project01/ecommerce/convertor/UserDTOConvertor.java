@@ -18,13 +18,6 @@ public class UserDTOConvertor {
 
     public UserResponseDTO toUserDTOResponse(UserEntity item){
         UserResponseDTO userResponseDTO = modelMapper.map(item, UserResponseDTO.class);
-        if(item.getPicture()!= null && !item.getPicture().equals("")){
-            String picture= ServletUriComponentsBuilder.fromCurrentContextPath().toUriString()+"/avatar/"+item.getPicture();
-            userResponseDTO.setPicture(picture);
-        }
-        if(item.getGoogleid() != null && !item.getGoogleid().equals("")){
-            userResponseDTO.setPicture(item.getPicture());
-        }
         return userResponseDTO;
     }
 }

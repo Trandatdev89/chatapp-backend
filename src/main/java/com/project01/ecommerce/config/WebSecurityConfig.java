@@ -53,10 +53,6 @@ public class WebSecurityConfig {
                         .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
 
                         .accessDeniedHandler(new JwtAccessDeniedEntryPoint()))
-                .oauth2Login(login -> login
-                        .successHandler((request, response, authentication) -> {
-                            response.sendRedirect("/auth/google");
-                        }))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
 
@@ -76,7 +72,8 @@ public class WebSecurityConfig {
                 if(!responseToken.isValid()){
                     throw new AppException(EnumException.INVALID_TOKEN);
                 }
-                return nimbusJwtDecoder.decode(token);
+                var tokenDecode = nimbusJwtDecoder.decode(token);
+                return tokenDecode;
             }catch (Exception e){
                 System.out.println(e.getMessage());
                 throw e;
@@ -99,17 +96,13 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+    JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
-
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
-
         return jwtAuthenticationConverter;
     }
-
-
 
     @Bean
     public NimbusJwtEncoder jwtEncoder() {

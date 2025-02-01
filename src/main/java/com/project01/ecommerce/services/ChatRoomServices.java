@@ -9,7 +9,6 @@ import java.util.List;
 
 public interface ChatRoomServices {
     ChatRoomResponse createChatRoom(ChatRoomRequest chatRoomRequest);
-    void addUserToChatRoom(AddUserRequest addUserRequest);
     List<ChatRoomResponse> getChatRoomByUser();
     ChatRoomResponse getChatRoomById(Long id);
     void deleteChatRoom(List<Long> id);

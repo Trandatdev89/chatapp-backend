@@ -111,11 +111,7 @@ public class UserServicesImpl implements UserServices {
         users.setEmail(user.getEmail());
         users.setFullname(user.getFullname());
         users.setPhone(user.getPhone());
-        try {
-            users.setPicture(uploadfileUtil.uploadFile(user.getPicture()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        users.setPicture(uploadfileUtil.uploadFile(user.getPicture()));
         userRepository.save(users);
     }
 

@@ -12,6 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -22,11 +23,15 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "user")
-public class UserEntity implements UserDetails{
+public class UserEntity implements UserDetails, Principal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    public UserEntity(Long id) {
+        this.id = id;
+    }
 
     @Column
     private String username;
@@ -89,5 +94,10 @@ public class UserEntity implements UserDetails{
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String getName() {
+        return id.toString();
     }
 }
