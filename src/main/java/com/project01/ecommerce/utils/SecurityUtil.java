@@ -50,7 +50,7 @@ public class SecurityUtil {
         Instant now = Instant.now();
 
         JwtClaimsSet jwtClaimsSet=JwtClaimsSet.builder()
-                .claim("scope",user.getAuthorities().stream().map(item->item.toString()).collect(Collectors.joining(" ")))
+                .claim("scope",user.getAuthorities().stream().distinct().map(item->item.toString()).collect(Collectors.joining(" ")))
                 .issuedAt(now)
                 .expiresAt(now.plus(expiration, ChronoUnit.SECONDS))
                 .subject(String.valueOf(user.getId()))

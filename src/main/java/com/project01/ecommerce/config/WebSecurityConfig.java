@@ -86,7 +86,7 @@ public class WebSecurityConfig {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.addAllowedOrigin("https://chatapp-frontend-eight-plum.vercel.app/"); // Thay vì "*", chỉ định rõ origin
+        corsConfiguration.addAllowedOrigin("http://localhost:3000/"); // Thay vì "*", chỉ định rõ origin
         corsConfiguration.addAllowedMethod("*");
         corsConfiguration.addAllowedHeader("*"); // Đảm bảo cho phép mọi header
         corsConfiguration.setAllowCredentials(true); // Cho phép gửi credentials (token, cookies,...)
