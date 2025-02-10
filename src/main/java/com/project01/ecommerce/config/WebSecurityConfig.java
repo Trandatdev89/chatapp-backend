@@ -7,6 +7,7 @@ import com.project01.ecommerce.model.request.TokenRequest;
 import com.project01.ecommerce.services.AuthServices;
 import com.project01.ecommerce.utils.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -32,6 +33,9 @@ public class WebSecurityConfig {
     @Autowired
     @Lazy
     private SecurityUtil securityUtil;
+
+    @Value("${FRONT_END.URI}")
+    private String frontEndUri;
 
     @Autowired
     private AuthServices authServices;
@@ -86,7 +90,7 @@ public class WebSecurityConfig {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.addAllowedOrigin("https://chatapp-frontend-eight-plum.vercel.app/"); // Thay vì "*", chỉ định rõ origin
+        corsConfiguration.addAllowedOrigin(frontEndUri); // Thay vì "*", chỉ định rõ origin
         corsConfiguration.addAllowedMethod("*");
         corsConfiguration.addAllowedHeader("*"); // Đảm bảo cho phép mọi header
         corsConfiguration.setAllowCredentials(true); // Cho phép gửi credentials (token, cookies,...)
