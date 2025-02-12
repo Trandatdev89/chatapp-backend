@@ -21,6 +21,4 @@ Mô tả cơ bản về dự án:
 
 +) có thể xem lại info và chỉnh sưa upload ảnh lại cập nhập
 
-Database online: "DATABASE_HOST" :"mysql-2da57429-tranquocdat30122004-1fa2.i.aivencloud.com", "DATABASE_PORT" : "15510", "DATABASE_USERNAME" : "avnadmin", "DATABASE_PASSWORD" : "AVNS_6kwbf0N_I5maEe146UP", "DATABASE_NAME" : "realestate"
-
 
